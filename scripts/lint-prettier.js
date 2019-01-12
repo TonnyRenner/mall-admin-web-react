@@ -15,6 +15,8 @@ const files = process.argv.slice(2);
 
 let didError = false;
 
+function onFinally() {}
+
 files.forEach(file => {
   Promise.all([
     prettier.resolveConfig(file, {
@@ -37,14 +39,10 @@ files.forEach(file => {
         fs.writeFileSync(file, output, 'utf8');
         console.log(chalk.green(`${file} is prettier`));
       }
+      onFinally();
     })
     .catch(e => {
       didError = true;
-    })
-    .finally(() => {
-      if (didError) {
-        process.exit(1);
-      }
-      console.log(chalk.hex('#1890FF')('prettier success!'));
+      onFinally();
     });
 });
